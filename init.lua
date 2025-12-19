@@ -102,13 +102,16 @@ vim.g.have_nerd_font = false
 vim.o.number = true
 -- You can also add relative line numbers, to help with jumping.
 --  Experiment for yourself to see if you like it!
--- vim.o.relativenumber = true
+vim.o.relativenumber = true
 
 -- Enable mouse mode, can be useful for resizing splits for example!
 vim.o.mouse = 'a'
 
 -- Don't show the mode, since it's already in the status line
 vim.o.showmode = false
+
+-- Spell checking languages
+vim.opt.spelllang = { 'en_gb' }
 
 -- Sync clipboard between OS and Neovim.
 --  Schedule the setting after `UiEnter` because it can increase startup-time.
@@ -216,6 +219,28 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   group = vim.api.nvim_create_augroup('kickstart-highlight-yank', { clear = true }),
   callback = function()
     vim.hl.on_yank()
+  end,
+})
+
+-- Enable spell checking for text files
+vim.api.nvim_create_autocmd('FileType', {
+  desc = 'Enable spell checking for text files',
+  group = vim.api.nvim_create_augroup('spell-check-text', { clear = true }),
+  pattern = { 'markdown', 'text', 'gitcommit', 'tex' },
+  callback = function()
+    vim.opt_local.spell = true
+    vim.opt_local.spelllang = 'en_us'
+  end,
+})
+
+-- Enable spell checking in comments and strings for code
+vim.api.nvim_create_autocmd('FileType', {
+  desc = 'Enable spell checking in comments and strings for code',
+  group = vim.api.nvim_create_augroup('spell-check-code', { clear = true }),
+  pattern = { 'python', 'javascript', 'typescript', 'lua', 'java', 'c', 'cpp', 'rust', 'go' },
+  callback = function()
+    vim.opt_local.spell = true
+    vim.opt_local.spelllang = 'en_us'
   end,
 })
 
@@ -673,7 +698,7 @@ require('lazy').setup({
       local servers = {
         -- clangd = {},
         -- gopls = {},
-        -- pyright = {},
+        pyright = {},
         -- rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
@@ -716,6 +741,7 @@ require('lazy').setup({
       local ensure_installed = vim.tbl_keys(servers or {})
       vim.list_extend(ensure_installed, {
         'stylua', -- Used to format Lua code
+        'markdownlint', -- Used to lint markdown files
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
@@ -975,7 +1001,7 @@ require('lazy').setup({
   --
   -- require 'kickstart.plugins.debug',
   -- require 'kickstart.plugins.indent_line',
-  -- require 'kickstart.plugins.lint',
+  require 'kickstart.plugins.lint',
   -- require 'kickstart.plugins.autopairs',
   -- require 'kickstart.plugins.neo-tree',
   -- require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps

@@ -1,33 +1,7 @@
---[[
-
-=====================================================================
-==================== READ THIS BEFORE CONTINUING ====================
-=====================================================================
-========                                    .-----.          ========
-========         .----------------------.   | === |          ========
-========         |.-""""""""""""""""""-.|   |-----|          ========
-========         ||                    ||   | === |          ========
-========         ||   KICKSTART.NVIM   ||   |-----|          ========
-========         ||                    ||   | === |          ========
-========         ||                    ||   |-----|          ========
-========         ||:Tutor              ||   |:::::|          ========
-========         |'-..................-'|   |____o|          ========
-========         `"")----------------(""`   ___________      ========
-========        /::::::::::|  |::::::::::\  \ no mouse \     ========
-========       /:::========|  |==hjkl==:::\  \ required \    ========
-========      '""""""""""""'  '""""""""""""'  '""""""""""'   ========
-========                                                     ========
-=====================================================================
-=====================================================================
-
-... header text omitted for brevity ...
---]]
-
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
-vim.g.have_nerd_font = false
-
+vim.g.have_nerd_font = true
 -- [[ Setting options ]]
 vim.o.number = true
 vim.o.relativenumber = true
@@ -54,6 +28,8 @@ vim.o.inccommand = 'split'
 vim.o.cursorline = true
 vim.o.scrolloff = 10
 vim.o.confirm = true
+
+vim.opt.conceallevel = 1
 
 -- [[ Basic Keymaps ]]
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
@@ -123,7 +99,6 @@ require('lazy').setup({
       },
     },
   },
-
   { -- which-key
     'folke/which-key.nvim',
     event = 'VimEnter',
@@ -216,7 +191,7 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>sF', function()
         builtin.find_files {
           hidden = true,
-          no_ignore = false, -- set true if you also want to ignore .gitignore
+          no_ignore = true,
         }
       end, { desc = '[S]earch [F]iles (hidden)' })
 
@@ -238,7 +213,7 @@ require('lazy').setup({
           additional_args = function()
             return {
               '--hidden', -- include hidden files
-              -- '--no-ignore', -- uncomment if you want to ignore .gitignore
+              '--no-ignore',
             }
           end,
         }
@@ -485,6 +460,20 @@ require('lazy').setup({
     },
   },
 
+  -- {
+  --   dir = '/home/paulgondolf/Documents/neovim-packages/blink-edit.nvim',
+  --   config = function()
+  --     require('blink-edit').setup {
+  --       llm = {
+  --         provider = 'sweep',
+  --         backend = 'openai',
+  --         url = 'http://localhost:8000',
+  --         model = 'sweep-next-edit-1.5b.q8_0.v2.gguf', -- Use actual model name
+  --         timeout_ms = 5000, -- Increase from default 5000ms to 15 seconds
+  --       },
+  --     }
+  --   end,
+  -- },
   { -- Colorscheme
     'folke/tokyonight.nvim',
     priority = 1000,
@@ -527,7 +516,58 @@ require('lazy').setup({
       indent = { enable = true, disable = { 'ruby' } },
     },
   },
+  { -- Obsidian
+    'epwalsh/obsidian.nvim',
+    version = '*',
+    lazy = true,
 
+    -- Load only for markdown files inside your vault.
+    event = {
+      'BufReadPre /home/paulgondolf/Documents/Obsidian\\ Vault/*.md',
+      'BufNewFile /home/paulgondolf/Documents/Obsidian\\ Vault/*.md',
+      -- If you also have notes in subfolders, add patterns for them too, e.g.:
+      'BufReadPre /home/paulgondolf/Documents/Obsidian\\ Vault/*/*.md',
+      'BufNewFile /home/paulgondolf/Documents/Obsidian\\ Vault/*/*.md',
+    },
+
+    dependencies = { 'nvim-lua/plenary.nvim' },
+
+    opts = {
+      workspaces = {
+        {
+          name = 'vault',
+          path = '/home/paulgondolf/Documents/Obsidian Vault',
+        },
+      },
+      picker = { name = 'telescope.nvim' },
+      ui = { enable = true },
+    },
+  },
+  {
+    'nvim-tree/nvim-tree.lua',
+    version = '*',
+    lazy = false,
+    dependencies = {
+      'nvim-tree/nvim-web-devicons',
+    },
+    config = function()
+      require('nvim-tree').setup {
+        -- If you don't have a Nerd Font, tell nvim-tree to disable icons
+        renderer = {
+          icons = {
+            show = {
+              file = vim.g.have_nerd_font,
+              folder = vim.g.have_nerd_font,
+            },
+          },
+        },
+      }
+
+      -- Keymaps
+      vim.keymap.set('n', '<leader>e', ':NvimTreeToggle<CR>', { desc = 'Toggle [E]xplorer', silent = true })
+      vim.keymap.set('n', '<leader>f', ':NvimTreeFocus<CR>', { desc = '[F]ocus Explorer', silent = true })
+    end,
+  },
   require 'kickstart.plugins.lint',
   -- { import = 'custom.plugins' },
 }, {

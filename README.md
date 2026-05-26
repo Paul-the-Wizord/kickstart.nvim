@@ -45,6 +45,73 @@ External Requirements:
 > See [Install Recipes](#Install-Recipes) for additional Windows and Linux specific notes
 > and quick install snippets
 
+### External Tools For This Fork
+
+This fork uses Neovim 0.12 native APIs (`vim.pack`, native LSP, native autocomplete),
+so language servers and CLIs are installed outside Neovim.
+
+Required by this config:
+
+- Search tools (Telescope file/grep pickers):
+  - `ripgrep`
+  - `fd` (`fd-find` on some distros)
+- LSP servers:
+  - `lua-language-server`
+  - `terraform-ls`
+  - `ty`
+- Formatters/linters:
+  - `stylua`
+  - `ruff`
+  - `prettier`
+  - `shfmt`
+  - `markdownlint`
+- Build/helper tools:
+  - `make` (for `telescope-fzf-native.nvim`)
+
+Example install commands (Linux):
+
+```sh
+# ty (already used in this repo)
+curl -LsSf https://astral.sh/ty/install.sh | sh
+
+# lua-language-server (package name may vary by distro)
+# e.g. Arch: sudo pacman -S lua-language-server
+
+# terraform-ls
+# https://developer.hashicorp.com/terraform/language-tools
+
+# formatter/linter tools
+npm install -g prettier markdownlint-cli
+
+# ruff (pick one)
+uv tool install ruff
+# or: pipx install ruff
+
+# stylua (pick one)
+cargo install stylua
+# or install from your distro package manager
+
+# shfmt
+# e.g. Arch: sudo pacman -S shfmt
+```
+
+After installation, verify with:
+
+```vim
+:checkhealth
+:checkhealth vim.lsp
+```
+
+### Terminal Configuration
+
+Terminal behavior is configured in `lua/kickstart/user_config.lua`.
+
+- `<leader>t` uses an internal Neovim terminal split (toggle behavior)
+- `terminal.split` controls where that split opens
+- `terminal.height` controls split height
+- `terminal.shell` controls the shell used by Neovim (`vim.o.shell`)
+- `agent.command` controls the command launched in your agent terminal windows
+
 ### Install Kickstart
 
 > [!NOTE]
@@ -68,9 +135,9 @@ fork to your machine using one of the commands below, depending on your OS.
 > Your fork's URL will be something like this:
 > `https://github.com/<your_github_username>/kickstart.nvim.git`
 
-You likely want to remove `lazy-lock.json` from your fork's `.gitignore` file
-too - it's ignored in the kickstart repo to make maintenance easier, but it's
-[recommended to track it in version control](https://lazy.folke.io/usage/lockfile).
+This fork uses `vim.pack` and tracks `nvim-pack-lock.json` in version control.
+After first startup you can update plugins with `:lua vim.pack.update()` and
+review lockfile changes in git.
 
 #### Clone kickstart.nvim
 
@@ -110,8 +177,8 @@ Start Neovim
 nvim
 ```
 
-That's it! Lazy will install all the plugins you have. Use `:Lazy` to view
-the current plugin status. Hit `q` to close the window.
+That's it! Neovim will install plugins declared via `vim.pack.add(...)`.
+You can update plugins with `:lua vim.pack.update()`.
 
 #### Read The Friendly Documentation
 
@@ -145,7 +212,8 @@ examples of adding popularly requested plugins.
     `~/.local/share/nvim-kickstart`. You can apply this approach to any Neovim
     distribution that you would like to try out.
 * What if I want to "uninstall" this configuration:
-  * See [lazy.nvim uninstall](https://lazy.folke.io/usage#-uninstalling) information
+  * Remove your config directory and matching data directory (for example
+    `~/.config/nvim` and `~/.local/share/nvim`).
 * Why is the kickstart `init.lua` a single file? Wouldn't it make sense to split it into multiple files?
   * The main purpose of kickstart is to serve as a teaching tool and a reference
     configuration that someone can easily use to `git clone` as a basis for their own.

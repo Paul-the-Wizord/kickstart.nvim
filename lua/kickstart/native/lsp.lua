@@ -26,6 +26,13 @@ function M.setup()
       map('grD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
 
       local client = vim.lsp.get_client_by_id(event.data.client_id)
+
+      -- Only pull omnifunc into 'complete' once the LSP has actually taken over
+      -- 'omnifunc' (see native/completion.lua for why 'o' isn't set globally).
+      if client and client:supports_method('textDocument/completion', event.buf) and vim.bo[event.buf].omnifunc == 'v:lua.vim.lsp.omnifunc' then
+        vim.opt_local.complete:append 'o'
+      end
+
       if client and client:supports_method('textDocument/documentHighlight', event.buf) then
         local highlight_augroup = vim.api.nvim_create_augroup('kickstart-lsp-highlight', { clear = false })
         vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
@@ -62,6 +69,11 @@ function M.setup()
         ignoreDirectoryNames = { '.venv' },
       },
     },
+    on_attach = function(client, _)
+      -- Disable semantic tokens to prevent known freeze bug
+      -- https://github.com/hashicorp/terraform-ls/issues/2125
+      client.server_capabilities.semanticTokensProvider = nil
+    end,
   })
 
   vim.lsp.config('ty', {
@@ -70,7 +82,44 @@ function M.setup()
     root_markers = { 'ty.toml', 'pyproject.toml', 'setup.py', 'setup.cfg', 'requirements.txt', '.git' },
   })
 
-  vim.lsp.enable { 'lua_ls', 'terraformls', 'ty' }
+  vim.lsp.config('rust_analyzer', {
+    cmd = { 'rust-analyzer' },
+    filetypes = { 'rust' },
+    root_markers = { 'Cargo.toml', '.git' },
+    handlers = {
+      ['textDocument/publishDiagnostics'] = function(err, result, ctx, config)
+        local seen = {}
+        local filtered = {}
+        for _, diag in ipairs(result.diagnostics) do
+          local key = table.concat({
+            diag.range.start.line,
+            diag.range.start.character,
+            diag.message,
+          }, ':')
+          if not seen[key] then
+            seen[key] = true
+            filtered[#filtered + 1] = diag
+          end
+        end
+        result.diagnostics = filtered
+        vim.lsp.diagnostic.on_publish_diagnostics(err, result, ctx, config)
+      end,
+    },
+  })
+
+  vim.lsp.config('ts_ls', {
+    cmd = { 'typescript-language-server', '--stdio' },
+    filetypes = { 'typescript', 'typescriptreact', 'javascript', 'javascriptreact' },
+    root_markers = { 'tsconfig.json', 'package.json', '.git' },
+  })
+
+  vim.lsp.config('angularls', {
+    cmd = { 'ngserver', '--stdio', '--tsProbeLocations', vim.fn.getcwd(), '--ngProbeLocations', vim.fn.getcwd() },
+    filetypes = { 'typescript', 'html', 'typescriptreact' },
+    root_markers = { 'angular.json' },
+  })
+
+  vim.lsp.enable { 'lua_ls', 'terraformls', 'ty', 'rust_analyzer', 'ts_ls', 'angularls' }
 end
 
 return M

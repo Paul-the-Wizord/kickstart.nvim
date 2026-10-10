@@ -3,6 +3,16 @@ local M = {}
 function M.setup()
   if vim.fn.has 'nvim-0.12' == 0 then error('This config requires Neovim 0.12+') end
 
+  -- must be set before llama.vim's plugin/ script is sourced by vim.pack.add below
+  local user_config = require 'kickstart.user_config'
+  vim.g.llama_config = {
+    endpoint_fim = user_config.llama.endpoint_fim,
+    show_info = user_config.llama.show_info,
+    auto_fim = user_config.llama.auto_fim,
+    keymap_fim_trigger = user_config.llama.keymap_fim_trigger,
+    keymap_fim_accept_word = user_config.llama.keymap_fim_accept_word,
+  }
+
   vim.api.nvim_create_autocmd('PackChanged', {
     group = vim.api.nvim_create_augroup('kickstart-pack-changed', { clear = true }),
     callback = function(event)
@@ -31,7 +41,6 @@ function M.setup()
     { src = 'https://github.com/nvim-telescope/telescope-ui-select.nvim', version = '6e51d7da30bd139a6950adf2a47fda6df9fa06d2' },
     { src = 'https://github.com/nvim-tree/nvim-web-devicons', version = 'd7462543c9e366c0d196c7f67a945eaaf5d99414' },
     { src = 'https://github.com/stevearc/conform.nvim', version = '086a40dc7ed8242c03be9f47fbcee68699cc2395' },
-    { src = 'https://github.com/rose-pine/neovim', name = 'rose-pine', version = '9504524e5ed0e326534698f637f9d038ba4cd0ee' },
     { src = 'https://github.com/folke/todo-comments.nvim', version = '31e3c38ce9b29781e4422fc0322eb0a21f4e8668' },
     { src = 'https://github.com/echasnovski/mini.nvim', version = '9990c41f10f54f29a888d13024c9f765037bde23' },
     { src = 'https://github.com/epwalsh/obsidian.nvim', version = 'ae1f76a75c7ce36866e1d9342a8f6f5b9c2caf9b' },
@@ -39,6 +48,7 @@ function M.setup()
     { src = 'https://github.com/nvim-tree/nvim-tree.lua', name = 'nvim-tree.lua', version = 'e1ad8b96834779b4c2674ef83be3f1a4ed007358' },
     { src = 'https://github.com/mfussenegger/nvim-lint', version = '606b823a57b027502a9ae00978ebf4f5d5158098' },
     { src = 'https://github.com/nvim-treesitter/nvim-treesitter', version = '4916d6592ede8c07973490d9322f187e07dfefac' },
+    -- { src = 'https://github.com/ggml-org/llama.vim', version = '93f8106ed7657859d7eefebdb210edad515e9463' },
   }, {
     confirm = false,
     load = true,

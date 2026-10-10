@@ -8,6 +8,8 @@ function M.setup()
       python = { 'ruff_format' },
       markdown = { 'prettier' },
       sh = { 'shfmt' },
+      terraform = { 'terraform_fmt' },
+      ['terraform-vars'] = { 'terraform_fmt' },
     },
   }
 end

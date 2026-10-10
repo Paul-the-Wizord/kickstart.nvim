@@ -8,6 +8,16 @@ function M.setup()
         show = { file = vim.g.have_nerd_font, folder = vim.g.have_nerd_font },
       },
     },
+    actions = {
+      open_file = {
+        window_picker = {
+          exclude = {
+            buftype = { 'terminal', 'nofile' },
+            filetype = { 'NvimTree', 'qf', 'TelescopePrompt' },
+          },
+        },
+      },
+    },
   }
 
   vim.keymap.set('n', '<leader>e', ':NvimTreeToggle<CR>', { desc = 'Toggle [E]xplorer', silent = true })

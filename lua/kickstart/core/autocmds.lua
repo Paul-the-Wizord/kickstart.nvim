@@ -20,6 +20,16 @@ function M.setup()
     end,
   })
 
+  -- Clear the legacy python3complete omnifunc before the LSP attaches.
+  -- Without this, 'autocomplete' fires on insert and calls python3complete#Complete
+  -- which errors because g:python3complete_completions is undefined.
+  vim.api.nvim_create_autocmd('FileType', {
+    desc = 'Clear legacy omnifunc for Python (LSP will set it on attach)',
+    group = vim.api.nvim_create_augroup('python-clear-omnifunc', { clear = true }),
+    pattern = 'python',
+    callback = function() vim.bo.omnifunc = '' end,
+  })
+
   local spell_group = vim.api.nvim_create_augroup('user-spell-check', { clear = true })
   vim.api.nvim_create_autocmd('FileType', {
     desc = 'Enable spell checking for text files',

@@ -33,7 +33,7 @@ end
 
 local check_external_reqs = function()
   check_executables('Basic utilities used by this config:', { 'git', 'make', 'unzip', 'rg' })
-  check_executables('LSP servers configured in native LSP setup:', { 'lua-language-server', 'terraform-ls', 'ty' })
+  check_executables('LSP servers configured in native LSP setup:', { 'lua-language-server', 'terraform-ls', 'ty', 'tsgo', 'ngserver' })
   check_executables('Formatters and linters configured in this config:', {
     'stylua',
     'ruff',

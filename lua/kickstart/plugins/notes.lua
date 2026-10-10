@@ -2,7 +2,7 @@ local M = {}
 
 function M.setup()
   require('obsidian').setup {
-    workspaces = { { name = 'vault', path = '~/Desktop/Pauls Notes' } },
+    workspaces = { { name = 'vault', path = '~/notes/' } },
     picker = { name = 'telescope.nvim' },
     ui = { enable = true },
   }

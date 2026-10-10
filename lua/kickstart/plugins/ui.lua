@@ -10,13 +10,12 @@ function M.setup()
       { '<leader>s', group = '[S]earch', mode = { 'n', 'v' } },
       { '<leader>g', group = '[G]it' },
       { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } },
-
       { '<leader>a', group = '[A]gent Terminal' },
     },
   }
 
-  require('rose-pine').setup { styles = { italic = false } }
-  vim.cmd.colorscheme 'rose-pine'
+  -- port of OpenCode's default TUI theme (see lua/kickstart/plugins/theme.lua)
+  vim.cmd.colorscheme 'opencode'
 
   require('todo-comments').setup { signs = false }
 

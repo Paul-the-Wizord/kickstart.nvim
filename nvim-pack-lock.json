@@ -20,6 +20,11 @@
       "src": "https://github.com/NMAC427/guess-indent.nvim",
       "version": "'84a4987ff36798c2fc1169cbaff67960aed9776f'"
     },
+    "llama.vim": {
+      "rev": "93f8106ed7657859d7eefebdb210edad515e9463",
+      "src": "https://github.com/ggml-org/llama.vim",
+      "version": "'93f8106ed7657859d7eefebdb210edad515e9463'"
+    },
     "mini.nvim": {
       "rev": "9990c41f10f54f29a888d13024c9f765037bde23",
       "src": "https://github.com/echasnovski/mini.nvim",
@@ -54,11 +59,6 @@
       "rev": "b9fd5226c2f76c951fc8ed5923d85e4de065e509",
       "src": "https://github.com/nvim-lua/plenary.nvim",
       "version": "'b9fd5226c2f76c951fc8ed5923d85e4de065e509'"
-    },
-    "rose-pine": {
-      "rev": "9504524e5ed0e326534698f637f9d038ba4cd0ee",
-      "src": "https://github.com/rose-pine/neovim",
-      "version": "'9504524e5ed0e326534698f637f9d038ba4cd0ee'"
     },
     "telescope-fzf-native.nvim": {
       "rev": "6fea601bd2b694c6f2ae08a6c6fab14930c60e2c",

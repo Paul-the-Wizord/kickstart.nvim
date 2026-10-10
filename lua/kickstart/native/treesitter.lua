@@ -18,7 +18,7 @@ function M.setup()
   if not treesitter_configs_ok then return end
 
   treesitter_configs.setup {
-    ensure_installed = { 'bash', 'diff', 'html', 'luadoc', 'markdown_inline', 'query' },
+    ensure_installed = { 'bash', 'diff', 'html', 'luadoc', 'markdown_inline', 'query', 'typescript', 'tsx', 'python' },
     auto_install = true,
     highlight = {
       enable = true,
